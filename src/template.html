@@ -14,27 +14,27 @@
       />
       <div class="interface">
         <div class="left">
-          <div class="grid"></div>
+          <div class="grid" id="root"></div>
         </div>
         <div class="right">
           <div id="display" class="display"></div>
           <div class="cancel-button">
             <button></button>
           </div>
-          <div class="numpad">
+          <div class="numpad" id="numpad">
             <ul>
-              <li><button>1</button></li>
-              <li><button>2</button></li>
-              <li><button>3</button></li>
-              <li><button>4</button></li>
-              <li><button>5</button></li>
-              <li><button>6</button></li>
-              <li><button>7</button></li>
-              <li><button>8</button></li>
-              <li><button>9</button></li>
-              <li><button>C</button></li>
-              <li><button>0</button></li>
-              <li><button>OK</button></li>
+              <li><button data-index="1">1</button></li>
+              <li><button data-index="2">2</button></li>
+              <li><button data-index="3">3</button></li>
+              <li><button data-index="4">4</button></li>
+              <li><button data-index="5">5</button></li>
+              <li><button data-index="6">6</button></li>
+              <li><button data-index="7">7</button></li>
+              <li><button data-index="8">8</button></li>
+              <li><button data-index="9">9</button></li>
+              <li><button data-function="cancel">C</button></li>
+              <li><button data-index="0">0</button></li>
+              <li><button id="ok">OK</button></li>
             </ul>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import Product from "./Product";
 import returnChange from "./returnChange";
-import { randomInt } from "./utulities";
+import { inRange, randomInt } from "./utulities";
 
 function generateRandomGrid(
   rows: number,
@@ -36,8 +36,9 @@ export default class VendorMachine {
   posY: number;
   grid: (Product | null)[][];
   _errCallback?: (id: number, message: string) => void;
+  selectPosition: (n: number) => boolean;
 
-  static errors: {[key:number]:string} = {
+  static errors: { [key: number]: string } = {
     0: "Empty place",
     1: "Not enough money",
     2: "Not selected",
@@ -59,6 +60,7 @@ export default class VendorMachine {
     this.posX = -1;
     this.posY = -1;
     this.grid = generateRandomGrid(rows, columns, prices, 2);
+    this.selectPosition = this._selectPosY;
   }
 
   onError(cb: (id: number, message: string) => void) {
@@ -82,19 +84,28 @@ export default class VendorMachine {
     return insertedCoins;
   }
 
-  selectProduct(pos: number) {
-    if (pos >= 0) {
-      if (this.posX < 0) {
-        this.posX = pos;
-      } else if (this.posY < 0) {
-        this.posY = pos;
-      }
+  _selectPosX(x: number) {
+    if (inRange(x, 0, this.columns)) {
+      this.posX = x;
+      this.selectPosition = () => true;
+      return true;
     }
+    return false;
+  }
+
+  _selectPosY(y: number) {
+    if (inRange(y, 0, this.rows)) {
+      this.posY = y;
+      this.selectPosition = this._selectPosX;
+      return true;
+    }
+    return false;
   }
 
   cancelPositionSelection() {
     this.posX = -1;
     this.posY = -1;
+    this.selectPosition = this._selectPosY;
   }
 
   errCallback(errId: number) {
@@ -108,19 +119,26 @@ export default class VendorMachine {
     if (this.posX > -1 && this.posY > -1) {
       const product = this.grid[this.posY][this.posX];
       if (product === null) {
+        this.cancelPositionSelection();
         return this.errCallback(0);
       }
       if (product.price > this.insertedCoinsValue) {
+        this.cancelPositionSelection();
         return this.errCallback(1);
       }
       const oddMoney = this.insertedCoinsValue - product.price;
       product.quantity -= 1;
+      const x = this.posX,
+        y = this.posY;
       if (product.quantity <= 0) {
         this.grid[this.posX][this.posX] = null;
       }
+      this.cancelPositionSelection();
+
       return {
         product: new Product(product.id, product.price, 1),
         change: returnChange(oddMoney, this.availableCoins),
+        pos: [x, y],
       };
     }
     return this.errCallback(2);
