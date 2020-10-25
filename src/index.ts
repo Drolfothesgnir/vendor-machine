@@ -1,11 +1,13 @@
 import GridView from "./GridView";
 import "./less/index.less";
-import VendorMachine from "./VendorMachine";
+import VendorMachine from "./VendorMachine/VendorMachine";
+import VM_Events from "./VendorMachine/vmEvents";
 
 const gridRoot = document.getElementById("root");
 const numpad = document.getElementById("numpad");
 const display = document.getElementById("display");
 const ok = document.getElementById("ok");
+const coins = document.getElementById("coins");
 const availableCoins = [200, 100, 50, 20, 10, 5];
 const allowedCoinInsertions = { 200: true, 100: true, 50: true };
 const prices = {
@@ -18,12 +20,26 @@ const vm = new VendorMachine(
   5,
   availableCoins,
   allowedCoinInsertions,
-  prices
+  prices,
+  2
 );
 
 const view = new GridView(vm.grid);
-vm.onError(console.log);
 view.render(gridRoot!);
+
+vm.on(VM_Events.COIN_INSERTED, (coin) => {
+  display!.innerText = vm.insertedCoinsValue.toString();
+  console.log("inserted coin: ", coin);
+});
+vm.on(VM_Events.ROW_SELECTED, (row) => console.log("selected row: ", row));
+vm.on(VM_Events.COLUMN_SELECTED, (col) =>
+  console.log("selected column: ", col)
+);
+vm.on(VM_Events.PURCHASED, (row, col) => {
+  view.removeProduct(row, col);
+  console.log("purchased", row, col);
+  console.log("product: ", vm.dispense(), "\nchange: ", vm.getChange());
+});
 
 numpad?.addEventListener("click", (e) => {
   const value = (e.target as HTMLElement).dataset.index;
@@ -32,20 +48,13 @@ numpad?.addEventListener("click", (e) => {
   }
 });
 
-ok?.addEventListener("click", () => {
-  const product = vm.purchase();
-  if (product) {
-    display!.innerText = "0";
-    view.removeProduct(product.pos[1], product.pos[0]);
-    console.log(product);
+coins?.addEventListener("click", (e) => {
+  const value = (e.target as HTMLElement).dataset.value;
+  if (value) {
+    vm.insertCoin(+value);
   }
 });
 
-function insertCoin(coin: number) {
-  const returnedValue = vm.insertCoin(coin);
-  if (returnedValue === null) {
-    display!.innerText = vm.insertedCoinsValue.toString();
-  }
-}
-
-insertCoin(200);
+ok?.addEventListener("click", () => {
+  vm.purchase();
+});
