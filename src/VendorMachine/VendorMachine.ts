@@ -112,7 +112,7 @@ export default class VendorMachine {
     this.state.cancel();
   }
 
-  cancelSelectionPosition() {
+  cancelPositionSelection() {
     this.state.cancelPositionSelection();
   }
 

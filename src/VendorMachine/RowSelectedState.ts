@@ -9,7 +9,7 @@ export default class RowSelected extends WithCoins {
     if (inRange(pos, 0, this.vendorMachine.columns)) {
       this.vendorMachine.posX = pos;
       this.vendorMachine.setState(this.vendorMachine.columnSelected);
-      this.vendorMachine.notifier.notify(VM_Events.COLUMN_SELECTED, pos)
+      this.vendorMachine.notifier.notify(VM_Events.COLUMN_SELECTED, pos);
     }
   }
 

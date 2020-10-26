@@ -1,3 +1,4 @@
+import Product from "../Product";
 import { computeChange } from "../utulities";
 import RowSelected from "./RowSelectedState";
 import VM_Events from "./vmEvents";
@@ -32,7 +33,9 @@ export default class ColumnSelected extends RowSelected {
     this.vendorMachine.posX = -1;
     this.vendorMachine.insertedCoinsValue = 0;
     this.vendorMachine.insertedCoins = {};
-    this.vendorMachine.productPlace.push(product);
+    this.vendorMachine.productPlace.push(
+      new Product(product.id, product.price, 1)
+    );
     this.vendorMachine.setState(this.vendorMachine.noCoins);
     this.vendorMachine.notifier.notify(VM_Events.PURCHASED, y, x);
   }

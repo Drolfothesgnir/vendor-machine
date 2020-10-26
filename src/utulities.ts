@@ -5,7 +5,8 @@ export function randomInt(max: number, min = 0) {
 export function inRange(value: number, min: number, max: number) {
   return value >= min && value <= max;
 }
-export  function computeChange(sum: number, availableCoins: number[]) {
+
+export function computeChange(sum: number, availableCoins: number[]) {
   if (sum === 0) {
     return {};
   }

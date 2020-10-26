@@ -1,14 +1,10 @@
 import Product from "./Product";
 
-type Options = {
-  wrapperClassname?: string;
-};
-
 export default class GridView {
   wrapper: HTMLDivElement;
-  constructor(grid: (Product | null)[][], options: Options = {}) {
+  constructor(grid: (Product | null)[][]) {
     const wrapper = document.createElement("div");
-    wrapper.className = options.wrapperClassname || "grid-wrapper";
+    wrapper.className = "grid-wrapper";
     for (let y = 0; y < grid.length; y++) {
       const row = document.createElement("ul");
       for (let x = 0; x < grid[0].length; x++) {
@@ -17,6 +13,7 @@ export default class GridView {
         if (product) {
           for (let i = 0; i < product.quantity; i++) {
             const productEl = document.createElement("span");
+            productEl.className = 'product';
             productEl.dataset.productId = product.id.toString();
             col.appendChild(productEl);
           }

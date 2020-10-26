@@ -1,14 +1,25 @@
 @import "fonts";
 @import "reset";
 @import "grid";
+@import "coins";
 
 body {
   font-family: @base-font, sans-serif;
 }
 
+.flex {
+  display: flex;
+  align-items: flex-start;
+}
+
 .vendor-machine {
-  width: 50%;
+  height: 100vh;
   position: relative;
+
+  img {
+    height: 100%;
+    width: auto;
+  }
 }
 
 .interface {
@@ -44,7 +55,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.3vw;
+  font-size: 3vh;
 }
 
 .cancel-button {
@@ -53,8 +64,8 @@ body {
   padding-right: 12%;
 
   button {
-    width: 4vw;
-    height: 3vw;
+    width: 5.5vh;
+    height: 4.2vh;
     background-image: url("../assets/images/cancel-button.png");
     background-size: contain;
     background-repeat: no-repeat;
@@ -63,7 +74,7 @@ body {
 }
 
 .numpad {
-  margin-top: 20%;
+  margin-top: 16%;
 
   ul {
     display: flex;
@@ -86,8 +97,8 @@ body {
     background-repeat: no-repeat;
     width: 100%;
     color: #161616;
-    font-size: 1vw;
-    height: 2vw;
+    font-size: 1.7vh;
+    height: 3vh;
 
     &:active {
       background-image: url("../assets/images/pinpad-button-pressed.png");

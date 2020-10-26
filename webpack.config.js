@@ -49,7 +49,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new HtmlWebpackPlugin({
-      title: "Dots game",
+      title: "Vendor machine",
       template: "./src/template.html",
     }),
     new MiniCssExtractPlugin(),
@@ -65,8 +65,8 @@ module.exports = {
     extensions: ["*", ".ts", ".js"],
   },
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.join(__dirname, "dist"),
     compress: true,
-    port: 3000
-  }
+    port: 3000,
+  },
 };

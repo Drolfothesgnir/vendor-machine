@@ -1,13 +1,18 @@
 import GridView from "./GridView";
-import "./less/index.less";
 import VendorMachine from "./VendorMachine/VendorMachine";
 import VM_Events from "./VendorMachine/vmEvents";
+import "./less/index.less";
 
-const gridRoot = document.getElementById("root");
-const numpad = document.getElementById("numpad");
-const display = document.getElementById("display");
-const ok = document.getElementById("ok");
-const coins = document.getElementById("coins");
+const gridRoot = document.getElementById("root")!;
+const numpad = document.getElementById("numpad")!;
+const display = document.getElementById("display")!;
+const ok = document.getElementById("ok")!;
+const cancel = document.getElementById("cancel")!;
+const coins = document.getElementById("coins")!;
+const cancelPos = document.getElementById("cancel-pos")!;
+const productPlace = document.getElementById("product-place")!;
+const changePlace = document.getElementById("change")!;
+
 const availableCoins = [200, 100, 50, 20, 10, 5];
 const allowedCoinInsertions = { 200: true, 100: true, 50: true };
 const prices = {
@@ -25,10 +30,14 @@ const vm = new VendorMachine(
 );
 
 const view = new GridView(vm.grid);
-view.render(gridRoot!);
+view.render(gridRoot);
+
+function showRunningSum() {
+  display.innerText = vm.insertedCoinsValue.toString();
+}
 
 vm.on(VM_Events.COIN_INSERTED, (coin) => {
-  display!.innerText = vm.insertedCoinsValue.toString();
+  showRunningSum();
   console.log("inserted coin: ", coin);
 });
 vm.on(VM_Events.ROW_SELECTED, (row) => console.log("selected row: ", row));
@@ -37,24 +46,61 @@ vm.on(VM_Events.COLUMN_SELECTED, (col) =>
 );
 vm.on(VM_Events.PURCHASED, (row, col) => {
   view.removeProduct(row, col);
+  display.innerText = "";
   console.log("purchased", row, col);
-  console.log("product: ", vm.dispense(), "\nchange: ", vm.getChange());
+  const product = vm.dispense()!;
+  const purchased = document.createElement("span");
+  purchased.className = "product";
+  purchased.dataset.productId = product[0].id.toString();
+  const left = (col / vm.columns) * 100;
+  purchased.style.left = left + "%";
+  purchased.style.width = 100 / vm.columns + "%";
+  productPlace.appendChild(purchased);
+  setTimeout(() => {
+    productPlace.removeChild(purchased);
+  }, 3000);
+
+  console.log("product: ", product, "\nchange: ", vm.getChange());
 });
 
-numpad?.addEventListener("click", (e) => {
+vm.on(VM_Events.EMPTY_PLACE_SELECTED, (row, col) => {
+  display.innerText = "EMPTY";
+  setTimeout(showRunningSum, 2500);
+  console.log("Empty place selected, row: %d, col: %d", row, col);
+});
+
+vm.on(VM_Events.NOT_ENOUGH_MONEY, () => {
+  display.innerText = "ERROR";
+  setTimeout(showRunningSum, 2500);
+  console.log("not enough money");
+});
+
+vm.on(VM_Events.CANCELED, () => {
+  display.innerText = "";
+  console.log("canceled", vm.getChange());
+});
+
+vm.on(VM_Events.POS_SELECTION_CANCELED, () =>
+  console.log("position selection canceled")
+);
+
+numpad.addEventListener("click", (e) => {
   const value = (e.target as HTMLElement).dataset.index;
   if (value) {
     vm.selectPosition(+value - 1);
   }
 });
 
-coins?.addEventListener("click", (e) => {
+coins.addEventListener("click", (e) => {
   const value = (e.target as HTMLElement).dataset.value;
   if (value) {
     vm.insertCoin(+value);
   }
 });
 
-ok?.addEventListener("click", () => {
+ok.addEventListener("click", () => {
   vm.purchase();
 });
+
+cancel.addEventListener("click", () => vm.cancel());
+cancelPos.addEventListener("click", () => vm.cancelPositionSelection());

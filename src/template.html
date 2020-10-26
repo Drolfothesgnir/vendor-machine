@@ -7,43 +7,49 @@
   </head>
 
   <body>
-    <div class="vendor-machine">
-      <img
-        src="<%=require('./assets/images/vendor-machine.png').default%>"
-        alt=""
-      />
-      <div class="interface">
-        <div class="left">
-          <div class="grid" id="root"></div>
-        </div>
-        <div class="right">
-          <div id="display" class="display"></div>
-          <div class="cancel-button">
-            <button></button>
+    <div class="flex">
+      <div class="vendor-machine">
+        <img
+          src="<%=require('./assets/images/vendor-machine.png').default%>"
+          alt=""
+        />
+        <div class="interface">
+          <div class="left">
+            <div class="grid" id="root"></div>
+            <div class="product-place" id="product-place"></div>
           </div>
-          <div class="numpad" id="numpad">
-            <ul>
-              <li><button data-index="1">1</button></li>
-              <li><button data-index="2">2</button></li>
-              <li><button data-index="3">3</button></li>
-              <li><button data-index="4">4</button></li>
-              <li><button data-index="5">5</button></li>
-              <li><button data-index="6">6</button></li>
-              <li><button data-index="7">7</button></li>
-              <li><button data-index="8">8</button></li>
-              <li><button data-index="9">9</button></li>
-              <li><button data-function="cancel">C</button></li>
-              <li><button data-index="0">0</button></li>
-              <li><button id="ok">OK</button></li>
-            </ul>
+          <div class="right">
+            <div id="display" class="display"></div>
+            <div class="cancel-button">
+              <button id="cancel"></button>
+            </div>
+            <div class="numpad" id="numpad">
+              <ul>
+                <li><button data-index="1">1</button></li>
+                <li><button data-index="2">2</button></li>
+                <li><button data-index="3">3</button></li>
+                <li><button data-index="4">4</button></li>
+                <li><button data-index="5">5</button></li>
+                <li><button data-index="6">6</button></li>
+                <li><button data-index="7">7</button></li>
+                <li><button data-index="8">8</button></li>
+                <li><button data-index="9">9</button></li>
+                <li><button id="cancel-pos">C</button></li>
+                <li><button data-index="0">0</button></li>
+                <li><button id="ok">OK</button></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div id="coins">
-      <button data-value="200">200</button>
-      <button data-value="100">100</button>
-      <button data-value="50">50</button>
+      <div class="right-coins">
+        <div id="coins" class="coins">
+          <button data-value="200" class="coin">200</button>
+          <button data-value="100" class="coin">100</button>
+          <button data-value="50" class="coin">50</button>
+        </div>
+        <div class="change" id="change"></div>
+      </div>
     </div>
   </body>
 </html>
