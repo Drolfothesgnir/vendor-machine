@@ -1,11 +1,15 @@
 @coins: 200, 100, 50, 20, 10, 5;
 
+.right-coins {
+  margin-left: 4vw;
+}
+
 .coins {
   border-radius: 2vh;
   background-color: #cfcfc8;
   border: 0.5vh solid #161616;
   padding: 2vh;
-  margin-left: 4vw;
+  display: inline-block;
 }
 
 .coin {
@@ -16,4 +20,19 @@
   font-size: 2vh;
   background-color: #c69c6d;
   border: 0.5vh solid #161616;
+  position: relative;
+}
+
+.change {
+  margin-top: 50vh;
+  .coin {
+    &::before {
+      content: attr(data-count);
+      color: #000;
+      position: absolute;
+      bottom: -60%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
 }

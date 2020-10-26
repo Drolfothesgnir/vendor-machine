@@ -20,6 +20,7 @@ const prices = {
   1: 190, //mars
   2: 315, //bomba
 };
+
 const vm = new VendorMachine(
   5,
   5,
@@ -32,6 +33,40 @@ const vm = new VendorMachine(
 const view = new GridView(vm.grid);
 view.render(gridRoot);
 
+const oddMoney: { [key: number]: HTMLElement } = {};
+availableCoins.forEach((coin) => {
+  oddMoney[coin] = changePlace.querySelector(
+    `[data-value="${coin}"`
+  )! as HTMLElement;
+});
+const currentChange: { [key: number]: number } = {};
+function returnChange(change: { [key: number]: number }) {
+  for (let coin in change) {
+    currentChange[coin] = currentChange[coin] + change[coin] || change[coin];
+    if (currentChange[coin] > 0) {
+      oddMoney[coin].classList.remove("hidden");
+
+      if (currentChange[coin] > 1) {
+        oddMoney[coin].dataset.count = currentChange[coin].toString();
+      }
+    }
+  }
+}
+
+function insertCoinFromChange(coin: number) {
+  if (coin in currentChange) {
+    currentChange[coin] -= 1;
+    oddMoney[coin].dataset.count = currentChange[coin].toString();
+    if (currentChange[coin] < 2) {
+      oddMoney[coin].dataset.count = "";
+    }
+    if (currentChange[coin] < 1) {
+      oddMoney[coin].classList.add("hidden");
+    }
+    vm.insertCoin(coin);
+  }
+}
+
 function showRunningSum() {
   display.innerText = vm.insertedCoinsValue.toString();
 }
@@ -40,10 +75,13 @@ vm.on(VM_Events.COIN_INSERTED, (coin) => {
   showRunningSum();
   console.log("inserted coin: ", coin);
 });
+
 vm.on(VM_Events.ROW_SELECTED, (row) => console.log("selected row: ", row));
+
 vm.on(VM_Events.COLUMN_SELECTED, (col) =>
   console.log("selected column: ", col)
 );
+
 vm.on(VM_Events.PURCHASED, (row, col) => {
   view.removeProduct(row, col);
   display.innerText = "";
@@ -59,8 +97,15 @@ vm.on(VM_Events.PURCHASED, (row, col) => {
   setTimeout(() => {
     productPlace.removeChild(purchased);
   }, 3000);
+  const change = vm.getChange();
+  returnChange(change);
+  console.log("product: ", product, "\nchange: ", change);
+});
 
-  console.log("product: ", product, "\nchange: ", vm.getChange());
+vm.on(VM_Events.INVALID_COIN, (coin) => {
+  const change = vm.getChange();
+  returnChange(change);
+  console.log("invalid coin: ", coin);
 });
 
 vm.on(VM_Events.EMPTY_PLACE_SELECTED, (row, col) => {
@@ -77,7 +122,9 @@ vm.on(VM_Events.NOT_ENOUGH_MONEY, () => {
 
 vm.on(VM_Events.CANCELED, () => {
   display.innerText = "";
-  console.log("canceled", vm.getChange());
+  const change = vm.getChange();
+  returnChange(change);
+  console.log("canceled", change);
 });
 
 vm.on(VM_Events.POS_SELECTION_CANCELED, () =>
@@ -103,4 +150,12 @@ ok.addEventListener("click", () => {
 });
 
 cancel.addEventListener("click", () => vm.cancel());
+
 cancelPos.addEventListener("click", () => vm.cancelPositionSelection());
+
+changePlace.addEventListener("click", (e) => {
+  const value = (e.target as HTMLElement).dataset.value;
+  if (value) {
+    insertCoinFromChange(+value);
+  }
+});

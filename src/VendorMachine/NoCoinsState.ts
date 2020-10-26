@@ -15,6 +15,9 @@ export default class NoCoins implements State {
         this.vendorMachine.insertedCoins[coin] + 1 || 1;
       this.vendorMachine.setState(this.vendorMachine.withCoins);
       this.vendorMachine.notifier.notify(VM_Events.COIN_INSERTED, coin);
+    } else {
+      this.vendorMachine.returnChange({ [coin]: 1 });
+      this.vendorMachine.notifier.notify(VM_Events.INVALID_COIN, coin);
     }
   }
 
