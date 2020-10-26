@@ -7,6 +7,10 @@ import ColumnSelected from "./ColumnSelectedState";
 import { randomInt } from "../utulities";
 import Notifier from "./Notifier";
 
+/**
+ * Helper function to generate product grid as multi-dimensional array and populate it with random products.
+ * Each product has id in range between minId and maxId.
+ */
 function generateRandomGrid(
   rows: number,
   columns: number,
@@ -29,24 +33,43 @@ function generateRandomGrid(
   }
   return grid;
 }
-
+/**
+ * VendorMachine implemented using State design pattern
+ */
 export default class VendorMachine {
+  /** Active state of machine. */
   private state: State;
+  /** Number of stages in product grid. */
   rows: number;
+  /** Number of products in one stage of product grid. */
   columns: number;
+  /** List of available coin types for purchasing and giving change. */
   availableCoins: number[];
+  /** Set of coin types allowed for insertion. */
   allowedCoinInsertions: { [key: number]: boolean };
+  /** Sum of all coins inserted. */
   insertedCoinsValue: number;
+  /** Map of all coins inserted with coin type as key and coin quantity as value. */
   insertedCoins: { [key: number]: number };
+  /** User-selected column. */
   posX: number;
+  /** User-selected row. */
   posY: number;
+  /** NoCoins state instance. */
   noCoins: State;
+  /** WithCoins state instance. */
   withCoins: State;
+  /** RowSelected state instance. */
   rowSelected: State;
+  /** ColumnSelected state instance. */
   columnSelected: State;
+  /** Product grid. */
   grid: (Product | null)[][];
+  /** Map of all changed coins with coin type as key and coin quantity as value. */
   changePlace: { [key: number]: number };
+  /** List of all purchased products. */
   productPlace: Product[];
+  /** Notifier instance. */
   notifier: Notifier;
 
   constructor(
@@ -55,6 +78,7 @@ export default class VendorMachine {
     availableCoins: number[],
     allowedCoinInsertions: { [key: number]: boolean },
     prices: { [key: number]: number },
+    /** Max id product can have. */
     maxId: number
   ) {
     this.rows = rows;
@@ -77,16 +101,19 @@ export default class VendorMachine {
     this.notifier = new Notifier();
   }
 
+  /** Changes current machine state. */
   setState(state: State) {
     this.state = state;
   }
 
+  /** Returns all available change and clears change place. */
   getChange() {
     const change = this.changePlace;
     this.changePlace = {};
     return change;
   }
 
+  /** Returns all purchased products and clears product place. */
   dispense() {
     const product = this.productPlace;
     if (product.length) {
@@ -96,6 +123,7 @@ export default class VendorMachine {
     return null;
   }
 
+  /** Adding specified change to change place. */
   returnChange(change: { [key: number]: number }) {
     this.changePlace = { ...this.changePlace, ...change };
   }
@@ -120,10 +148,12 @@ export default class VendorMachine {
     this.state.purchase();
   }
 
+  /** Subscribes callback on specified machine event. */
   on(event: number, cb: (...value: any[]) => void) {
     this.notifier.addListener(event, cb);
   }
 
+  /** Unsubscribes callback on specified machine event. */
   off(event: number, cb: (...value: any[]) => void) {
     this.notifier.removeListener(event, cb);
   }

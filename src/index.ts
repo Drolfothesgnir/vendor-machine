@@ -3,14 +3,24 @@ import VendorMachine from "./VendorMachine/VendorMachine";
 import VM_Events from "./VendorMachine/vmEvents";
 import "./less/index.less";
 
+// required UI elements
+/** Grid view root element. */
 const gridRoot = document.getElementById("root")!;
+/** Set of button for position selection.  */
 const numpad = document.getElementById("numpad")!;
+/** Element for showing machine messages. */
 const display = document.getElementById("display")!;
+/** Purchase button. */
 const ok = document.getElementById("ok")!;
+/** Cancel purchasing button. */
 const cancel = document.getElementById("cancel")!;
+/** Set of buttons for coin inserting. */
 const coins = document.getElementById("coins")!;
+/** Cancel position selection button. */
 const cancelPos = document.getElementById("cancel-pos")!;
+/** Element where purchased product appeares. */
 const productPlace = document.getElementById("product-place")!;
+/** Set of buttons representing changed coins. */
 const changePlace = document.getElementById("change")!;
 
 const availableCoins = [200, 100, 50, 20, 10, 5];
@@ -33,13 +43,18 @@ const vm = new VendorMachine(
 const view = new GridView(vm.grid);
 view.render(gridRoot);
 
+/** Map with returned coin type as key and corresponding HTML button as value. */
 const oddMoney: { [key: number]: HTMLElement } = {};
 availableCoins.forEach((coin) => {
   oddMoney[coin] = changePlace.querySelector(
     `[data-value="${coin}"`
   )! as HTMLElement;
 });
+
+/** Map with all returned change. */
 const currentChange: { [key: number]: number } = {};
+
+/** Helper function to update UI and currentChange. */
 function returnChange(change: { [key: number]: number }) {
   for (let coin in change) {
     currentChange[coin] = currentChange[coin] + change[coin] || change[coin];
@@ -53,6 +68,7 @@ function returnChange(change: { [key: number]: number }) {
   }
 }
 
+/** Helper function to update UI and currentChange when inserting coin from change place. */
 function insertCoinFromChange(coin: number) {
   if (coin in currentChange) {
     currentChange[coin] -= 1;
@@ -71,21 +87,41 @@ function showRunningSum() {
   display.innerText = vm.insertedCoinsValue.toString();
 }
 
+let timerID: NodeJS.Timeout;
+function showRunningSumWithDelay(delay: number) {
+  clearTimeout(timerID);
+  timerID = setTimeout(showRunningSum, delay);
+}
+
 vm.on(VM_Events.COIN_INSERTED, (coin) => {
   showRunningSum();
   console.log("inserted coin: ", coin);
 });
 
-vm.on(VM_Events.ROW_SELECTED, (row) => console.log("selected row: ", row));
+vm.on(VM_Events.ROW_SELECTED, (row) => {
+  row += 1;
+  display.innerText = "ROW: " + row;
+  showRunningSumWithDelay(2500);
+  console.log("selected row: ", row);
+});
 
-vm.on(VM_Events.COLUMN_SELECTED, (col) =>
-  console.log("selected column: ", col)
-);
+vm.on(VM_Events.COLUMN_SELECTED, (col) => {
+  col += 1;
+  display.innerText = "COL: " + col;
+  showRunningSumWithDelay(2500);
+  console.log("selected column: ", col);
+});
+
+vm.on(VM_Events.INVALID_PLACE_SELECTED, (pos) => {
+  display.innerText = "INVALID";
+  showRunningSumWithDelay(2500);
+  console.log("invalid place selected: ", pos + 1);
+});
 
 vm.on(VM_Events.PURCHASED, (row, col) => {
   view.removeProduct(row, col);
   display.innerText = "";
-  console.log("purchased", row, col);
+  console.log("purchased", row + 1, col + 1);
   const product = vm.dispense()!;
   const purchased = document.createElement("span");
   purchased.className = "product";
@@ -103,6 +139,8 @@ vm.on(VM_Events.PURCHASED, (row, col) => {
 });
 
 vm.on(VM_Events.INVALID_COIN, (coin) => {
+  display.innerText = "INVALID";
+  showRunningSumWithDelay(2500);
   const change = vm.getChange();
   returnChange(change);
   console.log("invalid coin: ", coin);
@@ -110,26 +148,29 @@ vm.on(VM_Events.INVALID_COIN, (coin) => {
 
 vm.on(VM_Events.EMPTY_PLACE_SELECTED, (row, col) => {
   display.innerText = "EMPTY";
-  setTimeout(showRunningSum, 2500);
-  console.log("Empty place selected, row: %d, col: %d", row, col);
+  showRunningSumWithDelay(2500);
+  console.log("Empty place selected, row: %d, col: %d", row + 1, col + 1);
 });
 
 vm.on(VM_Events.NOT_ENOUGH_MONEY, () => {
   display.innerText = "ERROR";
-  setTimeout(showRunningSum, 2500);
+  showRunningSumWithDelay(2500);
   console.log("not enough money");
 });
 
 vm.on(VM_Events.CANCELED, () => {
+  clearTimeout(timerID);
   display.innerText = "";
   const change = vm.getChange();
   returnChange(change);
   console.log("canceled", change);
 });
 
-vm.on(VM_Events.POS_SELECTION_CANCELED, () =>
-  console.log("position selection canceled")
-);
+vm.on(VM_Events.POS_SELECTION_CANCELED, () => {
+  display.innerText = "CANCEL";
+  showRunningSumWithDelay(2500);
+  console.log("position selection canceled");
+});
 
 numpad.addEventListener("click", (e) => {
   const value = (e.target as HTMLElement).dataset.index;

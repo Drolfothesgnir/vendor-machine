@@ -1,5 +1,8 @@
 type Key = number | string;
 
+/**
+ * helper class with purpose of subscribing on machine events and notifying subscribed users when this events occurs
+ */
 export default class Notifier {
   private channels: { [key in Key]: ((...value: any[]) => void)[] };
   constructor() {

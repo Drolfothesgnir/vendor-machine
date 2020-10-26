@@ -1,11 +1,14 @@
+/** Returns random integer in specified range. */
 export function randomInt(max: number, min = 0) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+/** Returns true if specified value is in specified range. */
 export function inRange(value: number, min: number, max: number) {
   return value >= min && value <= max;
 }
 
+/** Returns change with smallest number of available coins possible. */
 export function computeChange(sum: number, availableCoins: number[]) {
   if (sum === 0) {
     return {};

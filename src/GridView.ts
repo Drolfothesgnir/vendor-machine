@@ -1,5 +1,6 @@
 import Product from "./Product";
 
+/** HTML product grid representation. */
 export default class GridView {
   wrapper: HTMLDivElement;
   constructor(grid: (Product | null)[][]) {
