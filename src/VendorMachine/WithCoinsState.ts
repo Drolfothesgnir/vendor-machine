@@ -3,14 +3,14 @@ import NoCoins from "./NoCoinsState";
 import VM_Events from "./vmEvents";
 
 /**
- * This state is active after user inserted coin.
+ * Activated when user inserts coin.
  * Allows to select row and cancel purchasing.
  */
 export default class WithCoins extends NoCoins {
   // if user cancels purchasing
   // inserted coins value and position clears,
   // inserted coins drops to change place,
-  // state becomes initial NoCoins 
+  // state becomes initial NoCoins
   // and user gets notified
   cancel() {
     const insertedCoins = this.vendorMachine.insertedCoins;
@@ -24,7 +24,7 @@ export default class WithCoins extends NoCoins {
   }
 
   selectPosition(pos: number) {
-    // if user selects valid row 
+    // if user selects valid row
     // machine row value changes to user-selected,
     // state becomes RowSelected
     // and user gets notified with selected row value as callback parameter

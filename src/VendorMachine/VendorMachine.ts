@@ -34,11 +34,11 @@ function generateRandomGrid(
   return grid;
 }
 /**
- * VendorMachine implemented using State design pattern
+ * VendorMachine implemented using State design pattern.
  */
 export default class VendorMachine {
   /** Active state of machine. */
-  private state: State;
+  state: State;
   /** Number of stages in product grid. */
   rows: number;
   /** Number of products in one stage of product grid. */
@@ -78,7 +78,7 @@ export default class VendorMachine {
     availableCoins: number[],
     allowedCoinInsertions: { [key: number]: boolean },
     prices: { [key: number]: number },
-    /** Max id product can have. */
+    /** Max id number product can have. */
     maxId: number
   ) {
     this.rows = rows;

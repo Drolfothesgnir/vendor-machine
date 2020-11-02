@@ -3,7 +3,7 @@ import VM_Events from "./vmEvents";
 import WithCoins from "./WithCoinsState";
 
 /**
- * This state is active when user selected row. 
+ * Activated when row is selected. 
  * Allows to select column, cancel position selection and cancel purchasing.
  */
 export default class RowSelected extends WithCoins {

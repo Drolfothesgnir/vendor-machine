@@ -4,7 +4,7 @@ import RowSelected from "./RowSelectedState";
 import VM_Events from "./vmEvents";
 
 /**
- * This state is active when both row and column are selected.
+ * Activated when both row and column are selected.
  * Allows to purchase, cancel position selection and cancel purchasing.
  */
 export default class ColumnSelected extends RowSelected {
